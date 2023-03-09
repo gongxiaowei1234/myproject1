@@ -33,7 +33,8 @@
             <el-row :gutter="10">
               <el-col :span="18">
                 <!-- 第一步准备容器，并设置大小 -->
-                <div class="charts" ref="charts"></div>
+                <!-- style="width: 100%; height: 300px" -->
+                <div class="charts1" ref="charts" ></div>
               </el-col>
               <el-col :span="6" class="right">
                 <!-- v-if="this.activeName==sale? '销售额':'访问量'" -->
@@ -83,6 +84,7 @@
 
 <script>
 import dayjs from "dayjs";
+import {mapState} from "vuex";
 // import dayjs from 'dayjs';
 export default {
   name: "",
@@ -100,6 +102,9 @@ export default {
     title() {
       return this.activeName == "sale" ? "销售额" : "访问量";
     },
+    ...mapState({
+      listState:state=>state.home.list
+    })
   },
   created() {},
   methods: {
@@ -150,20 +155,8 @@ export default {
       xAxis: [
         {
           type: "category",
-          data: [
-            "1月",
-            "2月",
-            "3月",
-            "4月",
-            "5月",
-            "6月",
-            "7月",
-            "8月",
-            "9月",
-            "10月",
-            "11月",
-            "12月",
-          ],
+          data: this.listState.orderFullYearAxis
+          ,
           axisTick: {
             alignWithLabel: true,
           },
@@ -172,7 +165,7 @@ export default {
       yAxis: [
         {
           type: "value",
-          show: false,
+          show: true,
         },
       ],
       series: [
@@ -180,8 +173,9 @@ export default {
           //   name: "销售额",
           type: "bar",
           barWidth: "60%",
-          data: [10, 52, 200, 334, 390, 330, 220, 10, 52, 200, 334, 390, 330],
-          color: "blue",
+          data: this.listState.orderFullYear
+            ,
+          color: "yellowgreen",
         },
       ],
     });
@@ -191,7 +185,22 @@ export default {
         this.myCharts.setOption({
            title:{
             text:this.title +"趋势"
-           }
+           },
+           xAxis:{
+            data:this.title=="销售额"?this.listState.orderFullYearAxis:this.listState.userFullYearAxis
+           },
+           series: [
+        {
+          //   name: "销售额",
+          type: "bar",
+          barWidth: "60%",
+          data: 
+          this.title=="销售额"?this.listState.orderFullYear:this.listState.userFullYear
+          ,
+          color: "yellowgreen",
+        },
+      ],
+      listState(){},
         })
     }
   }
@@ -227,9 +236,9 @@ ul li {
 .right {
   padding: 0px;
 }
-.charts {
-  width: 100%;
-  height: 350px;
+.charts1 {
+  width: 100% !important;
+  height: 350px !important;
 }
 .el-card__header {
   border-bottom: none;
